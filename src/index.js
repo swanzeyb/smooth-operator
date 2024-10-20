@@ -1,58 +1,18 @@
-import OpenAI from 'openai'
-const openai = new OpenAI()
+import { ChatReader, ChatWriter } from './chat.js'
+import { AssistantReader, AssistantWriter } from './assistant.js'
 
-function getThread({ threadId }) {
-  if (threadId) {
-    return openai.beta.threads.retrieve(threadId)
-  } else {
-    return openai.beta.threads.create()
-  }
-}
+await (async () => {
+  console.info('--- Bot is now starting ---')
 
-function getAssistant({ assistantId }) {
-  if (assistantId) {
-    return openai.beta.assistants.retrieve(assistantId)
-  } else {
-    return openai.beta.assistants.create({
-      name: 'Shower Thought Helper',
-      instructions:
-        'You are a personal assitant. Your job is to read my incoming messages and store them in Notion. You can also help me with my thoughts and ideas.',
-      tools: [],
-      model: 'gpt-4o-mini',
-    })
-  }
-}
+  // Start the chat reader and writer
+  await ChatReader.ready
+  await ChatWriter.ready
 
-// await (async () => {
-//   console.info('--- Bot is now starting ---')
-//   console.info('--- Configuring OpenAI ---')
+  // Start the assistant reader and writer
+  await AssistantReader.ready
+  await AssistantWriter.ready
 
-//   // Read the config
-//   const file = Bun.file('src/config.json')
-//   const config = await file.json()
-
-//   // Get the assistant
-//   const assistant = await getAssistant({ assistantId: config.assistantId })
-//   console.log(`Assistant ID: ${assistant.id}`)
-
-//   // Save the assistant ID
-//   if (!config.assistantId) {
-//     config.assistantId = assistant.id
-
-//     await Bun.write(file, JSON.stringify(config, null, 2))
-//   }
-
-//   // Get the thread
-//   const thread = await getThread({ threadId: config.threadId })
-//   console.log(`Thread ID: ${thread.id}`)
-
-//   // Save the thread ID
-//   if (!config.threadId) {
-//     config.threadId = thread.id
-
-//     await Bun.write(file, JSON.stringify(config, null, 2))
-//   }
-
-//   console.info('--- Configured OpenAI ---')
-//   console.info('--- Bot is now ready ---')
-// })()
+  // Pipe the chat reader to the assistant writer
+  ChatReader.pipeTo(AssistantWriter)
+  AssistantReader.pipeTo(ChatWriter)
+})()

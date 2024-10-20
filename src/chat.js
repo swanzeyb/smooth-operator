@@ -1,9 +1,17 @@
 import { Client, GatewayIntentBits } from 'discord.js'
 
+// async function getClient() {
+//   if (global.client) {
+//     return global.client
+//   } else {
+
+//   }
+// }
+
 class DiscordReader {
   #client
 
-  start(controller) {
+  async start(controller) {
     this.#client = new Client({
       intents: [
         GatewayIntentBits.DirectMessages,
@@ -17,15 +25,23 @@ class DiscordReader {
     })
 
     // Command to send a DM when triggered (for example: !dm)
+    console.log(this.#client.on)
     this.#client.on('messageCreate', async (message) => {
+      console.info('🥚: ', message.content)
       // Enqueue message from user
       if (!message.author.bot) {
+        console.info('Enqueueing message from user: ', message.content)
         controller.enqueue(message)
       }
     })
 
+    this.#client.on('ready', async () => {
+      const x = await this.#client.users.fetch(process.env.DISCORD_USER_ID)
+      // x.send('Hello! I am now online.')
+    })
+
     // Log in to Discord with your bot token
-    return this.#client.login(process.env.DISCORD_BOT_TOKEN)
+    this.#client.login(process.env.DISCORD_BOT_TOKEN)
   }
 
   cancel(reason) {
