@@ -23,34 +23,43 @@ function getAssistant({ assistantId }) {
   }
 }
 
-await (async () => {
-  console.info('--- Bot is now starting ---')
+import { Discord } from './bot'
 
-  // Read the config
-  const file = Bun.file('src/config.json')
-  const config = await file.json()
+const x = Discord.getReader()
+x.read().then((msg) => {
+  console.log(msg.author.send('Hi from botty'))
+})
 
-  // Get the assistant
-  const assistant = await getAssistant({ assistantId: config.assistantId })
-  console.log(`Assistant ID: ${assistant.id}`)
+// await (async () => {
+//   console.info('--- Bot is now starting ---')
+//   console.info('--- Configuring OpenAI ---')
 
-  // Save the assistant ID
-  if (!config.assistantId) {
-    config.assistantId = assistant.id
+//   // Read the config
+//   const file = Bun.file('src/config.json')
+//   const config = await file.json()
 
-    await Bun.write(file, JSON.stringify(config, null, 2))
-  }
+//   // Get the assistant
+//   const assistant = await getAssistant({ assistantId: config.assistantId })
+//   console.log(`Assistant ID: ${assistant.id}`)
 
-  // Get the thread
-  const thread = await getThread({ threadId: config.threadId })
-  console.log(`Thread ID: ${thread.id}`)
+//   // Save the assistant ID
+//   if (!config.assistantId) {
+//     config.assistantId = assistant.id
 
-  // Save the thread ID
-  if (!config.threadId) {
-    config.threadId = thread.id
+//     await Bun.write(file, JSON.stringify(config, null, 2))
+//   }
 
-    await Bun.write(file, JSON.stringify(config, null, 2))
-  }
+//   // Get the thread
+//   const thread = await getThread({ threadId: config.threadId })
+//   console.log(`Thread ID: ${thread.id}`)
 
-  console.info('--- Bot is now ready ---')
-})()
+//   // Save the thread ID
+//   if (!config.threadId) {
+//     config.threadId = thread.id
+
+//     await Bun.write(file, JSON.stringify(config, null, 2))
+//   }
+
+//   console.info('--- Configured OpenAI ---')
+//   console.info('--- Bot is now ready ---')
+// })()
