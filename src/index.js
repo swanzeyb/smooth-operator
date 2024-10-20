@@ -23,13 +23,6 @@ function getAssistant({ assistantId }) {
   }
 }
 
-import { Discord } from './bot'
-
-const x = Discord.getReader()
-x.read().then((msg) => {
-  console.log(msg.author.send('Hi from botty'))
-})
-
 // await (async () => {
 //   console.info('--- Bot is now starting ---')
 //   console.info('--- Configuring OpenAI ---')
